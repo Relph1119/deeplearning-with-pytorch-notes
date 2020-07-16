@@ -46,7 +46,7 @@ print("torch.matmul(a, b).shape =", torch.matmul(a, b).shape)
 print()
 
 print("-----power-----")
-a = torch.full([2, 2], 3)
+a = torch.full([2, 2], 3, dtype=torch.float)
 print("a =\n", a)
 print("a.pow(2) =\n", a.pow(2))
 print("a ** 2 =\n", a ** 2)

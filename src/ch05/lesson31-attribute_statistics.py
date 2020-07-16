@@ -11,7 +11,7 @@
 import torch
 
 print("----- norm-p -----")
-a = torch.full([8], 1)
+a = torch.full([8], 1, dtype=torch.float)
 b = a.view(2, 4)
 c = a.view(2, 2, 2)
 print("b =\n", b)
