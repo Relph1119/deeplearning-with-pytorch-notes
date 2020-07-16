@@ -1,6 +1,6 @@
 # Pytorch深度学习练习代码
 &emsp;&emsp;龙龙（龙曲良）老师的《Pytorch深度学习》是Pytorch入门教材之一。  
-&emsp;&emsp;本练习代码主要分为12章+3章选学内容。  
+&emsp;&emsp;本练习代码主要分为14章+3章选学内容。  
 &emsp;&emsp;**申明：** 所有的代码都来源于《Pytorch深度学习》课程，github地址：https://github.com/dragen1860/Deep-Learning-with-PyTorch-Tutorials。
 
 ## 使用说明
