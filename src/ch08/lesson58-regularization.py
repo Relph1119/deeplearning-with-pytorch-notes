@@ -2,11 +2,12 @@
 # encoding: utf-8
 """
 @author: HuRuiFeng
-@file: lesson54-visdom.py
-@time: 2020/7/17 14:47
+@file: lesson58-regularization.py
+@time: 2020/7/23 15:27
 @project: deeplearning-with-pytorch-notes
-@desc: 第54课：Visdom可视化
+@desc: 第58课：Regularization
 """
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -29,6 +30,7 @@ def load_data(batch_size):
             # transforms.Normalize((0.1307,), (0.3081,))
         ])),
         batch_size=batch_size, shuffle=True)
+
     return train_loader, test_loader
 
 
@@ -52,7 +54,7 @@ class MLP(nn.Module):
         return x
 
 
-def training(train_loader, device, net, viz, global_step):
+def training(train_loader, device, net, criteon, optimizer, global_step, viz, epoch):
     for batch_idx, (data, target) in enumerate(train_loader):
         data = data.view(-1, 28 * 28)
         data, target = data.to(device), target.cuda()
@@ -70,11 +72,11 @@ def training(train_loader, device, net, viz, global_step):
 
         if batch_idx % 100 == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
-                loss.item()))
+                epoch, batch_idx * len(data), len(train_loader.dataset),
+                       100. * batch_idx / len(train_loader), loss.item()))
 
 
-def testing(test_loader, device, net, viz, global_step):
+def testing(test_loader, device, net, criteon, viz, global_step):
     test_loss = 0
     correct = 0
     for data, target in test_loader:
@@ -98,8 +100,6 @@ def testing(test_loader, device, net, viz, global_step):
         100. * correct / len(test_loader.dataset)))
 
 
-global net
-
 if __name__ == '__main__':
     batch_size = 200
     learning_rate = 0.01
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     device = torch.device('cuda:0')
     net = MLP().to(device)
-    optimizer = optim.SGD(net.parameters(), lr=learning_rate)
+    optimizer = optim.SGD(net.parameters(), lr=learning_rate, weight_decay=0.01)
     criteon = nn.CrossEntropyLoss().to(device)
 
     # 需要启动Visdom
@@ -119,9 +119,9 @@ if __name__ == '__main__':
     viz.line([0.], [0.], win='train_loss', opts=dict(title='train loss'))
     viz.line([[0.0, 0.0]], [0.], win='test', opts=dict(title='test loss&acc.',
                                                        legend=['loss', 'acc.']))
-
     global_step = 0
 
     for epoch in range(epochs):
-        training(train_loader, device, net, viz, global_step)
-        testing(test_loader, device, net, viz, global_step)
+        training(train_loader, device, net, criteon, optimizer, global_step, viz, epoch)
+
+        testing(test_loader, device, net, criteon, viz, global_step)

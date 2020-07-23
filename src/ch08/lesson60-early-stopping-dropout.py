@@ -2,11 +2,12 @@
 # encoding: utf-8
 """
 @author: HuRuiFeng
-@file: lesson54-visdom.py
-@time: 2020/7/17 14:47
+@file: lesson60-early-stopping-dropout.py
+@time: 2020/7/23 15:52
 @project: deeplearning-with-pytorch-notes
-@desc: 第54课：Visdom可视化
+@desc: 第60课：Early stopping, dropout等
 """
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -33,17 +34,17 @@ def load_data(batch_size):
 
 
 class MLP(nn.Module):
-
     def __init__(self):
         super(MLP, self).__init__()
 
         self.model = nn.Sequential(
             nn.Linear(784, 200),
-            nn.LeakyReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.ReLU(),
             nn.Linear(200, 200),
-            nn.LeakyReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.ReLU(),
             nn.Linear(200, 10),
-            nn.LeakyReLU(inplace=True),
         )
 
     def forward(self, x):
@@ -52,7 +53,7 @@ class MLP(nn.Module):
         return x
 
 
-def training(train_loader, device, net, viz, global_step):
+def training(train_loader, device, net, criteon, optimizer, global_step, viz, epoch):
     for batch_idx, (data, target) in enumerate(train_loader):
         data = data.view(-1, 28 * 28)
         data, target = data.to(device), target.cuda()
@@ -70,11 +71,11 @@ def training(train_loader, device, net, viz, global_step):
 
         if batch_idx % 100 == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader),
-                loss.item()))
+                epoch, batch_idx * len(data), len(train_loader.dataset),
+                       100. * batch_idx / len(train_loader), loss.item()))
 
 
-def testing(test_loader, device, net, viz, global_step):
+def testing(test_loader, device, net, criteon, viz, global_step):
     test_loss = 0
     correct = 0
     for data, target in test_loader:
@@ -98,8 +99,6 @@ def testing(test_loader, device, net, viz, global_step):
         100. * correct / len(test_loader.dataset)))
 
 
-global net
-
 if __name__ == '__main__':
     batch_size = 200
     learning_rate = 0.01
@@ -119,9 +118,10 @@ if __name__ == '__main__':
     viz.line([0.], [0.], win='train_loss', opts=dict(title='train loss'))
     viz.line([[0.0, 0.0]], [0.], win='test', opts=dict(title='test loss&acc.',
                                                        legend=['loss', 'acc.']))
-
     global_step = 0
 
     for epoch in range(epochs):
-        training(train_loader, device, net, viz, global_step)
-        testing(test_loader, device, net, viz, global_step)
+        net.train()
+        training(train_loader, device, net, criteon, optimizer, global_step, viz, epoch)
+        net.eval()
+        testing(test_loader, device, net, criteon, viz, global_step)
