@@ -32,7 +32,5 @@
 ## 主要贡献者（按首字母排名）
 [@胡锐锋-天国之影-Relph](https://github.com/Relph1119)
 
-## 总结
-
 ## LICENSE
 [GNU General Public License v3.0](https://github.com/relph1119/deeplearning-with-pytorch-notes/blob/master/LICENSE)
