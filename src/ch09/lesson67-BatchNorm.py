@@ -7,7 +7,6 @@
 @project: deeplearning-with-pytorch-notes
 @desc: 第67-68课：BatchNorm
 """
-import json
 
 import torch
 from torch import nn
