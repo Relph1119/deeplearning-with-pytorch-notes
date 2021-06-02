@@ -35,7 +35,7 @@ torchtext==0.6.0
 torchvision==0.6.1+cu101
 tornado==6.0.4
 tqdm==4.48.0
-urllib3==1.25.9
+urllib3==1.26.5
 visdom==0.1.8.9
 wasabi==0.7.1
 websocket-client==0.57.0
